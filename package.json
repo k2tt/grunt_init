@@ -6,8 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "repository": "",
-  "author": "",
+  "repository": "https://github.com/od-/grunt_init",
+  "author": "od",
   "license": "BSD",
   "devDependencies": {
     "grunt": "~0.4.5",
