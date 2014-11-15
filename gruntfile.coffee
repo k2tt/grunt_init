@@ -39,6 +39,14 @@ module.exports = (grunt)->
           },
           {
             expand: true
+            cwd: '_lib/html5-boilerplate/css/'
+            src: ["**/*.css"]
+            dest: '<%= dir.dev %><%= dir.css %>'
+            filter: 'isFile'
+            dot: false
+          },
+          {
+            expand: true
             cwd: '_lib/html5-boilerplate/'
             src: ["index.html"]
             dest: '<%= dir.dev %>'
@@ -163,4 +171,4 @@ module.exports = (grunt)->
     grunt.task.run('clean:init')
 
   grunt.registerTask "default", ['connect','watch'] #コーディング時
-  grunt.registerTask "release", ['uglify','clean:build','copy:build','uglify'] #公開時に実行するタスク
+  grunt.registerTask "release", ['uglify','clean:build','copy:build'] #公開時に実行するタスク
