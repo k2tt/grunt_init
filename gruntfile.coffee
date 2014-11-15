@@ -6,9 +6,9 @@ module.exports = (grunt)->
       release: 'htdocs/release/'
       coffee: 'files/_coffee/'
       js: 'files/js/'
-      scss: 'files/_scss'
-      css: 'files/css'
-      img: 'files/img'
+      scss: 'files/_scss/'
+      css: 'files/css/'
+      img: 'files/img/'
 
     bower:
       install:
@@ -34,6 +34,14 @@ module.exports = (grunt)->
             cwd: '_lib/html5-boilerplate/js/vendor/'
             src: ["**/modernizr*.js"]
             dest: '<%= dir.dev %><%= dir.js %>'
+            filter: 'isFile'
+            dot: false
+          },
+          {
+            expand: true
+            cwd: '_lib/html5-boilerplate/'
+            src: ["index.html"]
+            dest: '<%= dir.dev %>'
             filter: 'isFile'
             dot: false
           }
@@ -74,13 +82,16 @@ module.exports = (grunt)->
           }
         ]
 
-    clean: ["<%= dir.release %>"]
+    clean:
+      init: ["_lib/"]
+      build: ["<%= dir.release %>"]
 
     sass: #sassコンパイル
       dist:
         options:
-          compass: true #compassを有効に
+          #compass: true #compassを有効に
           style: 'expanded' #_devの段階では標準書式で出力する
+          sourcemap: 'none'
         files:[
           {
             expand: true
@@ -118,25 +129,16 @@ module.exports = (grunt)->
         files: "<%= dir.dev %><%= dir.coffee %>**/*.coffee"
         tasks : ['coffee']
 
-    ###
+
     cssmin: #CSS連結/コンパイル
       combine:
-        files:
-          'release/css/app.min.css': ['src/css/reset.css', 'src/css/main.css']
-
-    concat: #js結合
-      dist:
-        src: [
-          "src/js/plugins.js"
-          "src/js/main.js"
-        ]
-        dest: "release/app.js"
+        files: #適宜変更
+          '<%= dir.dev %><%= dir.css %>main_min.css': ['<%= dir.dev %><%= dir.css %>normalize.css', '<%= dir.dev %><%= dir.css %>main.css']
 
     uglify: #js結合/コンパイル
       js:
-        files:
-          'release/app.min.js': ['src/plugins.js', 'src/main.js']
-    ###
+        files: #適宜変更
+          '<%= dir.dev %><%= dir.js %>script_min.js': ['<%= dir.dev %><%= dir.js %>script_a.js', '<%= dir.dev %><%= dir.js %>script_b.js']
 
   require('load-grunt-tasks') grunt #プラグイン読み込み
  
@@ -153,8 +155,12 @@ module.exports = (grunt)->
     grunt.file.mkdir('htdocs/_dev/files/_scss')
     grunt.file.mkdir('htdocs/_dev/files/_coffee')
     grunt.file.mkdir('htdocs/_dev/files/js')
+    grunt.file.mkdir('htdocs/release')
+    grunt.file.mkdir('htdocs/release/files')
+    grunt.file.mkdir('htdocs/release/files/css')
+    grunt.file.mkdir('htdocs/release/files/img')
+    grunt.file.mkdir('htdocs/release/files/js')
+    grunt.task.run('clean:init')
 
-  grunt.registerTask "default", ['watch']
-
-  #grunt.registerTask "init", ["bower:install",'copy:init'] #init 
-  grunt.registerTask "release", ['clean','copy:build'] #公開時に実行するタスク
+  grunt.registerTask "default", ['connect','watch'] #コーディング時
+  grunt.registerTask "release", ['uglify','clean:build','copy:build','uglify'] #公開時に実行するタスク
